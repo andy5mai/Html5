@@ -1,0 +1,87 @@
+<html>
+<head>
+<style>
+#div1 {width:50px;height:20px;border:1px solid #aaaaaa;background:black;}
+#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue;}
+#div3 {width:150px;height:20px;border:1px solid #aaaaaa;background:Red;}
+#div4 {width:150px;height:70px;border:1px solid #aaaaaa;}
+#div5 {width:150px;height:70px;border:1px solid #aaaaaa;}
+#div6 {width:150px;height:70px;border:1px solid #aaaaaa;}
+
+</style>
+<script>
+var sn = 1;
+function allowDrop(evt)
+{
+	//var data = evt.dataTransfer.getData("Text");
+	//if (document.getElementById(data).getAttribute("level") > evt.target.getAttribute("level")) return;
+	evt.preventDefault();
+	
+}
+
+function drag(evt)
+{
+	evt.dataTransfer.setData("Text",evt.target.id);
+}
+
+function drop(evt)
+{
+	evt.preventDefault();
+	var data = evt.dataTransfer.getData("Text");
+	var currentLevel = document.getElementById(data).getAttribute("level");
+	
+	if (currentLevel > evt.target.getAttribute("currentlevel")) return;
+	
+	var parentNode = document.getElementById(data).parentNode;
+	if (parentNode.tagName == 'DIV')
+	{
+		var parentCurrentLevel;
+		if (parentNode.childNodes.length > 1)
+		{
+			if (data != parentNode.childNodes[parentNode.childNodes.length - 1].id) return;
+			parentCurrentLevel = parentNode.childNodes[parentNode.childNodes.length - 2]
+										   .getAttribute("level");
+		}
+		else
+		{
+			parentCurrentLevel = parentNode.getAttribute("level");
+		}
+		parentNode.setAttribute("currentlevel", parentCurrentLevel);
+	}
+	evt.target.appendChild(document.getElementById(data));
+	evt.target.setAttribute("currentlevel", currentLevel);
+	
+	
+	var stepCount = document.getElementById("stepCount").innerHTML;
+	document.getElementById("stepCount").innerHTML = parseInt(stepCount) + 1;
+}
+
+function addDragDrop()
+{
+	document.getElementById("div1").addEventListener('drop', drop, false);
+	document.getElementById("div1").addEventListener('dragover', allowDrop, false);	
+}
+
+function displayAttr()
+{
+	alert(document.getElementById("div5").getAttribute("level"));
+}
+
+</script>
+</head>
+<body>
+<input type="button" id="input1" value="Add Drag And Drop" onclick="addDragDrop()" >
+<input type="button" id="input2" value="display attr" onclick="displayAttr()" >
+<div id="stepCount">0</div>
+<div id="div1" draggable="true" ondragstart="drag(event)" level="1"></div>
+<div id="div2" draggable="true" ondragstart="drag(event)" level="2"></div>
+<div id="div3" draggable="true" ondragstart="drag(event)" level="3"></div>
+<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
+<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
+<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
+<!--
+<img id="drag1" src="http://pic.adver.com.tw/adpics/pic_718247_447365.gif" draggable="true"
+ondragstart="drag(event)" width="336" height="69">
+-->
+</body>
+</html>
