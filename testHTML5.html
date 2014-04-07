@@ -2,11 +2,14 @@
 <head>
 <style>
 #div1 {width:50px;height:20px;border:1px solid #aaaaaa;background:black;}
-#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue;}
+#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue; }
 #div3 {width:150px;height:20px;border:1px solid #aaaaaa;background:Red;}
-#div4 {width:150px;height:70px;border:1px solid #aaaaaa;}
-#div5 {width:150px;height:70px;border:1px solid #aaaaaa;}
-#div6 {width:150px;height:70px;border:1px solid #aaaaaa;}
+#div4 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div41 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#div5 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div51 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#div6 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div61 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 
 </style>
 <script>
@@ -28,11 +31,12 @@ function drop(evt)
 {
 	evt.preventDefault();
 	var data = evt.dataTransfer.getData("Text");
-	var currentLevel = document.getElementById(data).getAttribute("level");
+	var elementDroped = document.getElementById(data);
+	var currentLevel = elementDroped.getAttribute("level");
 	
 	if (currentLevel > evt.target.getAttribute("currentlevel")) return;
 	
-	var parentNode = document.getElementById(data).parentNode;
+	var parentNode = elementDroped.parentNode;
 	if (parentNode.tagName == 'DIV')
 	{
 		var parentCurrentLevel;
@@ -48,9 +52,14 @@ function drop(evt)
 		}
 		parentNode.setAttribute("currentlevel", parentCurrentLevel);
 	}
-	evt.target.appendChild(document.getElementById(data));
+	evt.target.appendChild(elementDroped);
 	evt.target.setAttribute("currentlevel", currentLevel);
-	
+	elementDroped.style.position = "relative";
+	elementDroped.style.margin = "0 auto";
+	elementDroped.style.left = 0;
+	elementDroped.style.top = -22;
+	//position:relative; margin:0 auto; left:0; top:-22;
+	//document.getElementById(data).setAttribute("style", oldStyle + "position:absolute;");
 	
 	var stepCount = document.getElementById("stepCount").innerHTML;
 	document.getElementById("stepCount").innerHTML = parseInt(stepCount) + 1;
@@ -67,18 +76,34 @@ function displayAttr()
 	alert(document.getElementById("div5").getAttribute("level"));
 }
 
+function displayPosition()
+{
+	var div1 = document.getElementById("div1");
+	alert(div1.style.left);
+	//alert("offsetLeft : " + div1.offsetLeft);
+	//alert("clientLeft : " + div1.clientLeft);
+	//alert("offsetTop : " + div1.offsetTop);
+}
+
 </script>
 </head>
 <body>
 <input type="button" id="input1" value="Add Drag And Drop" onclick="addDragDrop()" >
 <input type="button" id="input2" value="display attr" onclick="displayAttr()" >
+<input type="button" id="input2" value="display position" onclick="displayPosition()" >
 <div id="stepCount">0</div>
 <div id="div1" draggable="true" ondragstart="drag(event)" level="1"></div>
 <div id="div2" draggable="true" ondragstart="drag(event)" level="2"></div>
 <div id="div3" draggable="true" ondragstart="drag(event)" level="3"></div>
-<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
-<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
-<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4"></div>
+<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
+<div id="div41" ></div>
+</div>
+<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
+<div id="div51" ></div>
+</div>
+<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
+<div id="div61" ></div>
+</div>
 <!--
 <img id="drag1" src="http://pic.adver.com.tw/adpics/pic_718247_447365.gif" draggable="true"
 ondragstart="drag(event)" width="336" height="69">
