@@ -2,19 +2,19 @@
 <head>
 <style>
 #hanoi{ position:relative;}
-#div1 {width:50px;height:20px;border:1px solid #aaaaaa;background:black;}
-#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue;}
-#div3 {width:150px;height:20px;border:1px solid #aaaaaa;background:Red;}
-#div4 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left;}
-#div41 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#div5 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left; top:0px;}
-#div51 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#div6 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left;}
-#div61 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#stack1 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar1 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#stack2 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar2 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#stack3 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar3 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 
 </style>
 <script>
 var sn = 1;
+var dishWidth = 50;
+var dishHeight = 20;
+
 function allowDrop(evt)
 {
 	//var data = evt.dataTransfer.getData("Text");
@@ -37,7 +37,7 @@ function drop(evt)
 	
 	if (currentLevel > evt.target.getAttribute("currentlevel"))
 	{
-		alert("currentLevel : " + currentLevel + " bigger than target : " + evt.target.getAttribute("currentlevel"));
+		//alert("currentLevel : " + currentLevel + " bigger than target : " + evt.target.getAttribute("currentlevel"));
 		return;
 	}
 	
@@ -49,7 +49,7 @@ function drop(evt)
 		{
 			if (data != parentNode.children[parentNode.children.length - 1].id)
 			{
-				alert("it's not the last childNodes");
+				//alert("it's not the last childNodes");
 				return;
 			}
 			parentCurrentLevel = parentNode.children[parentNode.children.length - 2]
@@ -61,6 +61,7 @@ function drop(evt)
 		}
 		parentNode.setAttribute("currentlevel", parentCurrentLevel);
 	}
+	/*
 	evt.target.appendChild(elementDroped);
 	evt.target.setAttribute("currentlevel", currentLevel);
 	elementDroped.style.position = "relative";
@@ -69,6 +70,11 @@ function drop(evt)
 	elementDroped.style.top = -22 - (44 * (evt.target.children.length - 2));
 	//position:relative; margin:0 auto; left:0; top:-22;
 	//document.getElementById(data).setAttribute("style", oldStyle + "position:absolute;");
+	*/
+	
+	stackDish(evt.target, elementDroped, currentLevel);
+	
+	
 	
 	var stepCount = document.getElementById("stepCount").innerHTML;
 	document.getElementById("stepCount").innerHTML = parseInt(stepCount) + 1;
@@ -94,25 +100,102 @@ function displayPosition()
 	//alert("offsetTop : " + div1.offsetTop);
 }
 
+function createDishes()
+{
+	clearWholeDishes();
+	
+	var nAmount = parseInt(document.getElementById("txt_DishesAmount").value);
+	var newDish;
+	var initStack = document.getElementById("stack1");
+	setStack(initStack, nAmount);
+	setStack(document.getElementById("stack2"), nAmount);
+	setStack(document.getElementById("stack3"), nAmount);
+	
+	//var pillar = document.getElementById("pillar1");
+	//pillar.style.height = nAmount * dishHeight * 2 + "px";
+	
+	for(var i = nAmount; i > 0; i--)
+	{
+		newDish = document.createElement("div");
+		newDish.id = "dish" + i;
+		newDish.style.width = i * dishWidth + "px";
+		newDish.style.height = dishHeight + "px";
+		newDish.style.border = "1px solid #aaaaaa";
+		newDish.style.background = "black";
+		newDish.setAttribute("level", i);
+		newDish.setAttribute("draggable", "true");		
+		newDish.addEventListener('dragstart', drag, false);
+		
+		stackDish(initStack, newDish, i);
+	}
+}
+
+function setStack(stack, nAmount)
+{
+	stack.setAttribute("level", nAmount + 1);
+	stack.setAttribute("currentlevel", nAmount + 1);
+	stack.style.width = nAmount * dishWidth + "px";
+	stack.style.height = nAmount * dishHeight * 2 + "px";
+	stack.style.display = "";
+	
+	stack.children[0].style.display = "";
+	stack.children[0].style.height = nAmount * dishHeight * 2 + "px";
+}
+
+function stackDish(stack, dish, currentLevel)
+{
+	var dishHeightFix = dishHeight + 2;
+	stack.appendChild(dish);
+	stack.setAttribute("currentlevel", currentLevel);
+	dish.style.position = "relative";
+	dish.style.margin = "0 auto";	
+	dish.style.top = -1 * dishHeightFix - (dishHeightFix * 2 * (stack.children.length - 2));
+	//dish.style.top = -3 * dishHeight * (stack.children.length - 2);
+}
+
+function clearWholeDishes()
+{
+	clearDishes(document.getElementById("stack1"));
+	clearDishes(document.getElementById("stack2"));
+	clearDishes(document.getElementById("stack3"));
+}
+
+function clearDishes(stack)
+{
+	var nDishesAmount = stack.children.length;
+	for(var i = 1; i < nDishesAmount; i++)
+	{
+		stack.removeChild(stack.children[1]);
+	}
+	
+	stack.style.display = "none";
+	
+	stack.children[0].style.display = "none";
+}
+
 </script>
 </head>
 <body>
 <input type="button" id="input1" value="Add Drag And Drop" onclick="addDragDrop()" >
 <input type="button" id="input2" value="display attr" onclick="displayAttr()" >
-<input type="button" id="input2" value="display position" onclick="displayPosition()" >
+<input type="button" id="input3" value="display position" onclick="displayPosition()" >
+<input type="text" id="txt_DishesAmount" value="3">
+<input type="button" id="btn_create" value="Create New One" onclick="createDishes()">
 <div id="stepCount">0</div>
-<div id="div1" name="dish" draggable="true" ondragstart="drag(event)" level="1"></div>
-<div id="div2" name="dish" draggable="true" ondragstart="drag(event)" level="2"></div>
-<div id="div3" name="dish" draggable="true" ondragstart="drag(event)" level="3"></div>
+<!--
+<div id="div1" draggable="true" ondragstart="drag(event)" level="1"></div>
+<div id="div2" draggable="true" ondragstart="drag(event)" level="2"></div>
+<div id="div3" draggable="true" ondragstart="drag(event)" level="3"></div>
+-->
 <div id="hanoi">
-<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
-	<div id="div41" ></div>
+<div id="stack1" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
+	<div id="pillar1" ></div>
 </div>
-<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" container="true" level="4" currentlevel="4">
-	<div id="div51" ></div>
+<div id="stack2" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
+	<div id="pillar2" ></div>
 </div>
-<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" container="true" level="4" currentlevel="4">
-	<div id="div61" ></div>
+<div id="stack3" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
+	<div id="pillar3" ></div>
 </div>
 </div>
 <!--
@@ -120,4 +203,7 @@ function displayPosition()
 ondragstart="drag(event)" width="336" height="69">
 -->
 </body>
+<script>
+clearWholeDishes();
+</script>
 </html>
