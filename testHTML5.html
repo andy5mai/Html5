@@ -1,14 +1,15 @@
 <html>
 <head>
 <style>
+#hanoi{ position:relative;}
 #div1 {width:50px;height:20px;border:1px solid #aaaaaa;background:black;}
-#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue; }
+#div2 {width:100px;height:20px;border:1px solid #aaaaaa;background:blue;}
 #div3 {width:150px;height:20px;border:1px solid #aaaaaa;background:Red;}
-#div4 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div4 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left;}
 #div41 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#div5 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div5 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left; top:0px;}
 #div51 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#div6 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative;}
+#div6 {width:150px;height:70px;border:1px solid #aaaaaa; position:relative; float:left;}
 #div61 {width:5px;height:70px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 
 </style>
@@ -34,16 +35,24 @@ function drop(evt)
 	var elementDroped = document.getElementById(data);
 	var currentLevel = elementDroped.getAttribute("level");
 	
-	if (currentLevel > evt.target.getAttribute("currentlevel")) return;
+	if (currentLevel > evt.target.getAttribute("currentlevel"))
+	{
+		alert("currentLevel : " + currentLevel + " bigger than target : " + evt.target.getAttribute("currentlevel"));
+		return;
+	}
 	
 	var parentNode = elementDroped.parentNode;
-	if (parentNode.tagName == 'DIV')
+	if (parentNode.getAttribute("container") != null)
 	{
 		var parentCurrentLevel;
-		if (parentNode.childNodes.length > 1)
+		if (parentNode.children.length > 1)
 		{
-			if (data != parentNode.childNodes[parentNode.childNodes.length - 1].id) return;
-			parentCurrentLevel = parentNode.childNodes[parentNode.childNodes.length - 2]
+			if (data != parentNode.children[parentNode.children.length - 1].id)
+			{
+				alert("it's not the last childNodes");
+				return;
+			}
+			parentCurrentLevel = parentNode.children[parentNode.children.length - 2]
 										   .getAttribute("level");
 		}
 		else
@@ -56,8 +65,8 @@ function drop(evt)
 	evt.target.setAttribute("currentlevel", currentLevel);
 	elementDroped.style.position = "relative";
 	elementDroped.style.margin = "0 auto";
-	elementDroped.style.left = 0;
-	elementDroped.style.top = -22;
+	//elementDroped.style.left = 0;
+	elementDroped.style.top = -22 - (44 * (evt.target.children.length - 2));
 	//position:relative; margin:0 auto; left:0; top:-22;
 	//document.getElementById(data).setAttribute("style", oldStyle + "position:absolute;");
 	
@@ -92,17 +101,19 @@ function displayPosition()
 <input type="button" id="input2" value="display attr" onclick="displayAttr()" >
 <input type="button" id="input2" value="display position" onclick="displayPosition()" >
 <div id="stepCount">0</div>
-<div id="div1" draggable="true" ondragstart="drag(event)" level="1"></div>
-<div id="div2" draggable="true" ondragstart="drag(event)" level="2"></div>
-<div id="div3" draggable="true" ondragstart="drag(event)" level="3"></div>
-<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
-<div id="div41" ></div>
+<div id="div1" name="dish" draggable="true" ondragstart="drag(event)" level="1"></div>
+<div id="div2" name="dish" draggable="true" ondragstart="drag(event)" level="2"></div>
+<div id="div3" name="dish" draggable="true" ondragstart="drag(event)" level="3"></div>
+<div id="hanoi">
+<div id="div4" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
+	<div id="div41" ></div>
 </div>
-<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
-<div id="div51" ></div>
+<div id="div5" ondrop="drop(event)" ondragover="allowDrop(event)" container="true" level="4" currentlevel="4">
+	<div id="div51" ></div>
 </div>
-<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" level="4" currentlevel="4">
-<div id="div61" ></div>
+<div id="div6" ondrop="drop(event)" ondragover="allowDrop(event)" container="true" level="4" currentlevel="4">
+	<div id="div61" ></div>
+</div>
 </div>
 <!--
 <img id="drag1" src="http://pic.adver.com.tw/adpics/pic_718247_447365.gif" draggable="true"
