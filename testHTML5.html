@@ -3,18 +3,18 @@
 <style>
 #hanoi{ position:relative;}
 #stack1 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar1 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#pillar1 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 #stack2 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar2 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#pillar2 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 #stack3 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar3 {width:5px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#pillar3 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
 
 </style>
 <script>
 var sn = 1;
 var dishWidth = 50;
 var dishHeight = 20;
-
+var nDishesAmount = 0;
 function allowDrop(evt)
 {
 	//var data = evt.dataTransfer.getData("Text");
@@ -100,11 +100,10 @@ function displayPosition()
 	//alert("offsetTop : " + div1.offsetTop);
 }
 
-function createDishes()
+function createDishes(nAmount)
 {
 	clearWholeDishes();
-	
-	var nAmount = parseInt(document.getElementById("txt_DishesAmount").value);
+	nDishesAmount = nAmount;
 	var newDish;
 	var initStack = document.getElementById("stack1");
 	setStack(initStack, nAmount);
@@ -128,6 +127,9 @@ function createDishes()
 		
 		stackDish(initStack, newDish, i);
 	}
+	
+	document.getElementById("stepCount").innerHTML = 0;
+	document.getElementById("txt_DishesAmount").value = nAmount;
 }
 
 function setStack(stack, nAmount)
@@ -145,6 +147,14 @@ function setStack(stack, nAmount)
 function stackDish(stack, dish, currentLevel)
 {
 	var dishHeightFix = dishHeight + 2;
+	if (stack.getAttribute("finishCheck") != null
+		&& stack.children.length >= nDishesAmount)
+	{
+		alert("WELL DONE!!!");
+		nDishesAmount++;
+		createDishes(nDishesAmount);
+		return;
+	}
 	stack.appendChild(dish);
 	stack.setAttribute("currentlevel", currentLevel);
 	dish.style.position = "relative";
@@ -180,7 +190,7 @@ function clearDishes(stack)
 <input type="button" id="input2" value="display attr" onclick="displayAttr()" >
 <input type="button" id="input3" value="display position" onclick="displayPosition()" >
 <input type="text" id="txt_DishesAmount" value="3">
-<input type="button" id="btn_create" value="Create New One" onclick="createDishes()">
+<input type="button" id="btn_create" value="Create New One" onclick="createDishes(parseInt(document.getElementById('txt_DishesAmount').value))">
 <div id="stepCount">0</div>
 <!--
 <div id="div1" draggable="true" ondragstart="drag(event)" level="1"></div>
@@ -194,7 +204,7 @@ function clearDishes(stack)
 <div id="stack2" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
 	<div id="pillar2" ></div>
 </div>
-<div id="stack3" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4">
+<div id="stack3" ondrop="drop(event)" ondragover="allowDrop(event)" container level="4" currentlevel="4" finishCheck>
 	<div id="pillar3" ></div>
 </div>
 </div>
