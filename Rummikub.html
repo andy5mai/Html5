@@ -1,0 +1,68 @@
+<html>
+<head>
+<style>
+#hanoi{ position:relative;}
+#stack1 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar1 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#stack2 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar2 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+#stack3 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
+#pillar3 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
+
+</style>
+<script>
+var CardKind = new Array('A', 'B', 'C', 'D');
+var SpecialCardKind = 'E';
+var Cards = new Array();
+var splitSymbol = ":";
+
+var nLeftIndex = 0;
+
+function createNewCards()
+{
+	var newCards = document.getElementById("NewCards");
+	for(var i = 0; i < 2; i++)
+	{
+		for(var j = 0; j < CardKind.length; j++)
+		{
+			for(var k = 0; k < 13; k++)
+			{
+				Cards[(i * CardKind.length * 13) + (j * 13) +  k] = CardKind[j] + splitSymbol + (k + 1);
+				//newCards.innerHTML = (i * CardKind.length * 13) + (j * 13) +  (k + 1) + ", " + newCards.innerHTML;
+			}
+		}
+	}
+	
+	//Cards[Cards.length] = SpecialCardKind;
+	//Cards[Cards.length + 1] = SpecialCardKind;
+	
+	for(var i = 0; i < Cards.length; i++)
+	{
+		newCards.innerHTML = Cards[i] + ", " + newCards.innerHTML;
+	}
+	
+	nLeftIndex = Cards.length - 1;
+}
+
+function getRandomCard()
+{
+	if (nLeftIndex < 0) return;
+	var randomCards = document.getElementById("RandomCards")
+	var nIndex = Math.floor((Math.random() * nLeftIndex) + 1);
+	randomCards.innerHTML = Cards[nIndex] + ", " + randomCards.innerHTML;
+	
+	Cards[nIndex] = Cards[nLeftIndex];
+	
+	nLeftIndex--;
+}
+
+</script>
+</head>
+<body>
+<input type="button" id="input1" value="Create New Cards" onclick="createNewCards()" />
+<input type="button" id="input2" value="Get Random Card" onclick="getRandomCard()" />
+<div id="stepCount">0</div>
+<div id="NewCards"></div>
+<div id="RandomCards"></div>
+</body>
+</html>
