@@ -1,14 +1,9 @@
 <html>
 <head>
 <style>
-#hanoi{ position:relative;}
-#stack1 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar1 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#stack2 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar2 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-#stack3 {width:150px;height:0px;border:1px solid #aaaaaa; position:relative; float:left;}
-#pillar3 {width:2px;height:0px;border:1px solid #aaaaaa; position:relative; margin:0 auto; background:black;}
-
+#Rummikub{ position:relative;}
+#ComposeArea {width:150px;height:50px;border:1px solid #aaaaaa; position:relative; float:left; background:blue;}
+#A1 {width:50px;height:50px;border:1px solid #aaaaaa; position:relative; background:black;}
 </style>
 <script>
 var CardKind = new Array('A', 'B', 'C', 'D');
@@ -56,6 +51,59 @@ function getRandomCard()
 	nLeftIndex--;
 }
 
+function allowDrop(evt)
+{
+	evt.preventDefault();
+}
+
+function drag(evt)
+{
+	evt.dataTransfer.setData("Text",evt.target.id);
+}
+
+function drop(evt)
+{
+	evt.preventDefault();
+	var data = evt.dataTransfer.getData("Text");
+	var elementDroped = document.getElementById(data);
+	var currentLevel = elementDroped.getAttribute("level");
+	
+	if (currentLevel > evt.target.getAttribute("currentlevel"))
+	{
+		//alert("currentLevel : " + currentLevel + " bigger than target : " + evt.target.getAttribute("currentlevel"));
+		return;
+	}
+	
+	var parentNode = elementDroped.parentNode;
+	if (parentNode.getAttribute("container") != null)
+	{
+		var parentCurrentLevel;
+		if (parentNode.children.length > 1)
+		{
+			if (data != parentNode.children[parentNode.children.length - 1].id)
+			{
+				//alert("it's not the last childNodes");
+				return;
+			}
+			parentCurrentLevel = parentNode.children[parentNode.children.length - 2]
+										   .getAttribute("level");
+		}
+		else
+		{
+			parentCurrentLevel = parentNode.getAttribute("level");
+		}
+		parentNode.setAttribute("currentlevel", parentCurrentLevel);
+	}
+	
+	evt.target.appendChild(elementDroped);
+	evt.target.style.width = evt.target.style.width + elementDroped.style.width;
+	elementDroped.style.position = "relative";
+	//elementDroped.style.margin = "0 auto";
+	elementDroped.style.float = "left";
+	elementDroped.style.height = evt.target.style.height - 2;
+	
+}
+
 </script>
 </head>
 <body>
@@ -63,6 +111,9 @@ function getRandomCard()
 <input type="button" id="input2" value="Get Random Card" onclick="getRandomCard()" />
 <div id="stepCount">0</div>
 <div id="NewCards"></div>
-<div id="RandomCards"></div>
+<div id="RandomCards">
+	<div id="ComposeArea" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+</div>
+<div id="A1" draggable="true" ondragstart="drag(event)" ></div>
 </body>
 </html>
